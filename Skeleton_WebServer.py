@@ -18,7 +18,7 @@ serverPort = '6789'
 # A TCP based echo server
 
 echoSocket = socket.socket()
-echoSocket.bind(('', serverPort))
+echoSocket.bind((host, serverPort))
 
 # Listen to at most 1 connection at a time (max. number of threads in the connection queue)
 
@@ -39,7 +39,7 @@ while True:
     # the except clause is executed
     try:
         # Receives the request message from the client
-        message =  # FILL IN START		# FILL IN END
+        message = connectionSocket.recv(1024).decode()
 
         # Extract the path of the requested object from the message
         # The path is the second part of HTTP header, identified by [1]
@@ -54,13 +54,14 @@ while True:
         # f variable now contains the file specified by the filepath
 
         # Read the file "f" and store the entire content of the requested file in a temporary buffer
-        outputdata =  # FILL IN START		# FILL IN END
+        outputdata = f.read()
         # outputdata variable now contains the html code that the server is to send to the requesting client
 
         # FILL IN START
 
-        # Send the HTTP response header line to the connection socket
+        # Sending the HTTP response header line to the connection socket
         # The response should be in the following format: "HTTP/1.1 *code-for-successful-request*\r\n\r\n"
+        connectionSocket.send(bytes('HTTP/1.1 200 OK\r\n\r\n', 'UTF-8'))
 
         # FILL IN END
 
@@ -74,9 +75,7 @@ while True:
 
     except (IOError, IndexError):
         # FILL IN START
-
-        # Send HTTP response message for file not found
-        # Same format as the successful request, but with code for "Not Found" (see outputdata variable)
+        connectionSocket.send(bytes('HTTP/1.1 404 Not Found\r\n\r\n', 'UTF-8'))
 
         # FILL IN END
         connectionSocket.send(
